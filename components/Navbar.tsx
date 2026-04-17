@@ -5,9 +5,23 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./Navbar.module.css";
 
+interface NavbarSettings {
+  heroTitle?: string;
+}
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [settings, setSettings] = useState<NavbarSettings | null>(null);
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then(r => r.json())
+      .then(data => {
+        if (data && !data.error) setSettings(data);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +33,10 @@ export default function Navbar() {
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
+  const goToAdmin = () => {
+    closeMenu();
+    window.location.href = "/admin";
+  };
 
   const menuVariants = {
     closed: {
@@ -39,19 +57,22 @@ export default function Navbar() {
         delayChildren: 0.2,
       },
     },
-  };
+  } as const;
 
   const linkVariants = {
     closed: { opacity: 0, y: 20 },
     opened: { opacity: 1, y: 0 },
-  };
+  } as const;
 
   const navLinks = [
-    { name: "About me",  href: "#about"     },
-    { name: "Services",  href: "#services"  },
+    { name: "Home", href: "#home" },
+    { name: "About", href: "#about" },
+    { name: "Services", href: "#services" },
+    { name: "Education", href: "#education" },
+    { name: "Gear", href: "#gear" },
     { name: "Portfolio", href: "#portfolio" },
-    { name: "Feedback",  href: "#feedback"  },
-    { name: "Contact me",href: "#contact"   },
+    { name: "Feedback", href: "#feedback" },
+    { name: "Contact", href: "#contact" },
   ];
 
   return (
@@ -59,7 +80,7 @@ export default function Navbar() {
       <Link href="/#" className={styles.logoLink} onClick={closeMenu}>
         <span className="logo-circle">A</span>
         <span className={styles.logoText}>
-          Vision <span className={styles.lower}>of</span> Akash
+          {settings?.heroTitle?.split(' ')[0] || "Vision"} <span className={styles.lower}>{settings?.heroTitle?.split(' ')[1] || "of"}</span> {settings?.heroTitle?.split(' ').slice(2).join(' ') || "Akash"}
         </span>
       </Link>
 
@@ -70,6 +91,9 @@ export default function Navbar() {
             {link.name}
           </Link>
         ))}
+        <Link href="/admin" className={styles.adminBtn} onClick={goToAdmin}>
+          Admin
+        </Link>
       </nav>
 
       {/* Mobile Toggle */}
@@ -98,6 +122,11 @@ export default function Navbar() {
                 </Link>
               </motion.div>
             ))}
+            <motion.div variants={linkVariants}>
+              <Link href="/admin" onClick={goToAdmin} style={{ color: "var(--accent-color)", fontWeight: 700 }}>
+                Admin Login
+              </Link>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

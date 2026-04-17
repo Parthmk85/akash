@@ -2,23 +2,27 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.4rem 6%;
+  padding: 1rem 6%;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  background: transparent;
+  background: rgba(245, 239, 230, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 10px 40px rgba(45, 35, 29, 0.05);
+  border-bottom: 1px solid rgba(176, 125, 98, 0.1);
 }
 
 .scrolled {
-  background: rgba(245, 239, 230, 0.8);
+  background: rgba(245, 239, 230, 0.95);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   padding: 1rem 6%;
-  box-shadow: 0 10px 40px rgba(45, 35, 29, 0.05);
-  border-bottom: 1px solid rgba(176, 125, 98, 0.1);
+  box-shadow: 0 10px 40px rgba(45, 35, 29, 0.08);
+  border-bottom: 1px solid rgba(176, 125, 98, 0.15);
 }
 
 .logoLink {
@@ -161,6 +165,27 @@
 
 .mobileMenu a:hover {
   color: var(--accent-color);
+}
+
+.adminBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem !important;
+  border: 1.5px solid var(--accent-color) !important;
+  border-radius: 999px !important;
+  color: var(--accent-color) !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.12em !important;
+  transition: background 0.2s ease, color 0.2s ease !important;
+}
+
+.adminBtn:hover {
+  background: var(--accent-color) !important;
+  color: #fff !important;
+}
+
+.adminBtn::after {
+  display: none !important;
 }
 
 @media (max-width: 1024px) {

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import styles from './Contact.module.css';
 
-const contactDetails = [
+const fallbackContactDetails = [
   {
     icon: "📞",
     label: "PHONE",
@@ -30,6 +30,72 @@ const contactDetails = [
 ];
 
 const Contact = () => {
+  const [settings, setSettings] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then(r => r.json())
+      .then(data => {
+        if (data && !data.error) setSettings(data);
+      })
+      .catch(() => {});
+  }, []);
+
+  const contactDetails = settings ? [
+    {
+      icon: "📞",
+      label: "PHONE",
+      value: settings.contactPhone || "+91 88663 37539",
+      href: `tel:${(settings.contactPhone || "+918866337539").replace(/\s/g, '')}`,
+    },
+    {
+      icon: "✉️",
+      label: "EMAIL",
+      value: settings.contactEmail || "akashudeshi@gmail.com",
+      href: `mailto:${settings.contactEmail || "akashudeshi@gmail.com"}`,
+    },
+    {
+      icon: "📍",
+      label: "LOCATION",
+      value: settings.contactAddress || "Kaliyabid, Bhavnagar, Gujarat",
+      href: `https://maps.google.com/?q=${encodeURIComponent(settings.contactAddress || "Kaliyabid, Bhavnagar")}`,
+    },
+    {
+      icon: "🌐",
+      label: "LANGUAGES",
+      value: "Gujarati · Hindi · English",
+      href: null,
+    },
+  ] : fallbackContactDetails;
+
+  const [formData, setFormData] = useState({
+    name: '',
+    work: '',
+    message: '',
+    budget: ''
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const { name, work, message, budget } = formData;
+    
+    const whatsappMessage = `*New Inquiry from Vision of Akash Portfolio*%0A%0A` +
+      `*Name:* ${name}%0A` +
+      `*Work/Project:* ${work}%0A` +
+      `*Budget:* ${budget}%0A` +
+      `*Message:* ${message}`;
+      
+    const whatsappUrl = `https://wa.me/${(settings?.contactPhone || "918866337539").replace(/\D/g, '')}?text=${whatsappMessage}`;
+    
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
     <section id="contact" className={styles.contactContainer}>
       <div className={styles.content}>
@@ -78,18 +144,49 @@ const Contact = () => {
           viewport={{ once: true }}
           transition={{ duration: 1, delay: 0.2 }}
         >
-          <form className={styles.form}>
+          <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.inputGroup}>
               <label>YOUR NAME</label>
-              <input type="text" placeholder="Enter your name" />
+              <input 
+                type="text" 
+                name="name" 
+                placeholder="Enter your name" 
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
             </div>
             <div className={styles.inputGroup}>
-              <label>YOUR EMAIL</label>
-              <input type="email" placeholder="Enter your email" />
+              <label>WORK / PROJECT TITLE</label>
+              <input 
+                type="text" 
+                name="work" 
+                placeholder="What project are we doing?" 
+                value={formData.work}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>ESTIMATED BUDGET</label>
+              <input 
+                type="text" 
+                name="budget" 
+                placeholder="Enter your budget (Optional)" 
+                value={formData.budget}
+                onChange={handleChange}
+              />
             </div>
             <div className={styles.inputGroup}>
               <label>YOUR MESSAGE</label>
-              <textarea placeholder="Tell me about your project" rows={5}></textarea>
+              <textarea 
+                name="message" 
+                placeholder="Tell me about your project in detail" 
+                rows={5}
+                value={formData.message}
+                onChange={handleChange}
+                required
+              ></textarea>
             </div>
             <button type="submit" className={styles.submitBtn}>SEND MESSAGE</button>
           </form>

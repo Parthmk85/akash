@@ -1,4 +1,4 @@
-"use client"
+import React, { useState, useEffect } from "react";
 
 import { motion } from "framer-motion";
 import styles from "./Services.module.css";
@@ -83,7 +83,7 @@ const icons = {
 };
 
 // Featured service (hero strip)
-const featured = {
+const fallbackFeatured = {
   icon: icons.car,
   title: "Car / Bike Delivery Shooting",
   desc: "Premium on-location delivery shoots — cinematic reveal, creative angles, storytelling that sells.",
@@ -91,7 +91,7 @@ const featured = {
 };
 
 // Regular 10 services in 2 rows of 5
-const services = [
+const fallbackServices = [
   { id: 1,  icon: icons.film,        title: "Business Reel",       num: "01" },
   { id: 2,  icon: icons.instagram,   title: "Instagram Handling",  num: "02" },
   { id: 3,  icon: icons.ring,        title: "Wedding Reels",       num: "03" },
@@ -113,6 +113,32 @@ const cardVariants = {
 };
 
 export default function Services() {
+  const [serviceList, setServiceList] = useState<any[]>([]);
+  const [activeFeatured, setActiveFeatured] = useState<any>(fallbackFeatured);
+
+  useEffect(() => {
+    fetch("/api/services")
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const mainFeatured = data.find(s => s.isFeatured) || data[0];
+          setActiveFeatured({
+            ...mainFeatured,
+            icon: (icons as any)[mainFeatured.icon] || icons.car,
+            tag: mainFeatured.tag || "★ Featured"
+          });
+          const mapped = data.map(s => ({
+            ...s,
+            icon: (icons as any)[s.icon] || icons.film
+          }));
+          setServiceList(mapped);
+        } else {
+          setServiceList(fallbackServices);
+        }
+      })
+      .catch(() => setServiceList(fallbackServices));
+  }, []);
+
   return (
     <section id="services" className={styles.section}>
 
@@ -133,22 +159,22 @@ export default function Services() {
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className={styles.featuredLeft}>
-          <span className={styles.featuredTag}>{featured.tag}</span>
+          <span className={styles.featuredTag}>{activeFeatured.tag}</span>
           <div className={styles.featuredIconRow}>
-            <span className={styles.featuredIcon}>{featured.icon}</span>
-            <h3 className={styles.featuredTitle}>{featured.title}</h3>
+            <span className={styles.featuredIcon}>{activeFeatured.icon}</span>
+            <h3 className={styles.featuredTitle}>{activeFeatured.title}</h3>
           </div>
-          <p className={styles.featuredDesc}>{featured.desc}</p>
+          <p className={styles.featuredDesc}>{activeFeatured.desc || activeFeatured.description}</p>
         </div>
         <div className={styles.featuredRight}>
           <span className={styles.featuredArrow}>→</span>
         </div>
-        <span className={styles.featuredGhost}>01</span>
+        <span className={styles.featuredGhost}>{activeFeatured.num}</span>
       </motion.div>
 
       {/* ── 2-Row Card Grid (5 × 2) ── */}
       <div className={styles.grid}>
-        {services.map((svc, i) => (
+        {serviceList.map((svc, i) => (
           <motion.div
             key={svc.id}
             className={styles.card}

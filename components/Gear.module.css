@@ -1,0 +1,154 @@
+.section {
+  padding: clamp(4rem, 8vw, 7rem) 6%;
+  background: var(--bg-color);
+  width: 100%;
+}
+
+/* ── Label ─────────────── */
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 1.4rem;
+}
+.labelLine {
+  flex: 1;
+  max-width: 60px;
+  height: 1.5px;
+  background: var(--accent-color);
+  display: block;
+}
+.labelText {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--accent-color);
+}
+
+/* ── Heading ────────────── */
+.heading {
+  font-family: var(--font-serif);
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 3rem;
+  line-height: 1.1;
+}
+
+/* ── Grid ────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+/* ── Card ────────────────── */
+.card {
+  position: relative;
+  background: rgba(45, 35, 29, 0.04);
+  border: 1px solid var(--divider-color);
+  border-radius: 24px;
+  padding: 2.8rem 2.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  overflow: hidden;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  cursor: default;
+}
+
+.card:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 20px 60px rgba(176, 125, 98, 0.12);
+}
+
+/* Accent glow in corner */
+.cardAccent {
+  position: absolute;
+  bottom: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(176, 125, 98, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Icon ────────────────── */
+.iconWrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: var(--text-primary);
+  color: var(--bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(45, 35, 29, 0.2);
+}
+
+/* ── Body ────────────────── */
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.subtitle {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent-color);
+}
+
+.name {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.desc {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-top: 0.4rem;
+}
+
+/* ── Tags ────────────────── */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.tag {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  background: rgba(45, 35, 29, 0.08);
+  border: 1px solid var(--divider-color);
+  border-radius: 100px;
+  padding: 0.3rem 0.8rem;
+}
+
+/* ── Responsive ─────────── */
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

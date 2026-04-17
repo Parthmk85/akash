@@ -1,4 +1,4 @@
-"use client"
+import React, { useState, useEffect } from "react";
 
 import { motion } from "framer-motion";
 import styles from "./Education.module.css";
@@ -33,7 +33,7 @@ const icons = {
   )
 };
 
-const degrees = [
+const fallbackDegrees = [
   {
     id: 1,
     degree: "Master of Science in Information Technology",
@@ -52,7 +52,7 @@ const degrees = [
   },
 ];
 
-const university = {
+const fallbackUniversity = {
   name: "Maharaja Krishnakumarsinhji Bhavnagar University",
   short: "MKBU",
   location: "Bhavnagar, Gujarat",
@@ -69,6 +69,34 @@ const cardVariants = {
 };
 
 export default function Education() {
+  const [degreeList, setDegreeList] = useState<any[]>([]);
+  const [eduMeta, setEduMeta] = useState(fallbackUniversity);
+
+  useEffect(() => {
+    fetch("/api/education")
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          // Use first item's school info for the main badge
+          const first = data[0];
+          setEduMeta({
+            name: first.schoolName,
+            short: first.schoolShort,
+            location: first.location
+          });
+          // Map icons
+          const mapped = data.map(d => ({
+            ...d,
+            icon: (icons as any)[d.icon] || icons.graduation
+          }));
+          setDegreeList(mapped);
+        } else {
+          setDegreeList(fallbackDegrees);
+        }
+      })
+      .catch(() => setDegreeList(fallbackDegrees));
+  }, []);
+
   return (
     <section id="education" className={styles.section}>
       {/* Label */}
@@ -90,8 +118,8 @@ export default function Education() {
       >
         <span className={styles.uniIcon}>{icons.university}</span>
         <div>
-          <p className={styles.uniName}>{university.name}</p>
-          <p className={styles.uniMeta}>{university.short} · {university.location}</p>
+          <p className={styles.uniName}>{eduMeta.name}</p>
+          <p className={styles.uniMeta}>{eduMeta.short} · {eduMeta.location}</p>
         </div>
       </motion.div>
 
@@ -103,7 +131,7 @@ export default function Education() {
         whileInView="visible"
         viewport={{ once: true, margin: "-60px" }}
       >
-        {degrees.map((d) => (
+        {degreeList.map((d) => (
           <motion.div key={d.id} className={styles.card} variants={cardVariants}>
             <div className={styles.cardTop}>
               <span className={styles.degIcon}>{d.icon}</span>
