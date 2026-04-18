@@ -2,33 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import styles from './Contact.module.css';
 
-const fallbackContactDetails = [
-  {
-    icon: "📞",
-    label: "PHONE",
-    value: "+91 88663 37539",
-    href: "tel:+918866337539",
-  },
-  {
-    icon: "✉️",
-    label: "EMAIL",
-    value: "akashudeshi@gmail.com",
-    href: "mailto:akashudeshi@gmail.com",
-  },
-  {
-    icon: "📍",
-    label: "LOCATION",
-    value: "Kaliyabid, Bhavnagar, Gujarat",
-    href: "https://maps.google.com/?q=Kaliyabid,Bhavnagar",
-  },
-  {
-    icon: "🌐",
-    label: "LANGUAGES",
-    value: "Gujarati · Hindi · English",
-    href: null,
-  },
-];
-
 const Contact = () => {
   const [settings, setSettings] = useState<any>(null);
 
@@ -42,31 +15,31 @@ const Contact = () => {
   }, []);
 
   const contactDetails = settings ? [
-    {
+    settings.contactPhone ? {
       icon: "📞",
       label: "PHONE",
-      value: settings.contactPhone || "+91 88663 37539",
-      href: `tel:${(settings.contactPhone || "+918866337539").replace(/\s/g, '')}`,
-    },
-    {
+      value: settings.contactPhone,
+      href: `tel:${settings.contactPhone.replace(/\s/g, '')}`,
+    } : null,
+    settings.contactEmail ? {
       icon: "✉️",
       label: "EMAIL",
-      value: settings.contactEmail || "akashudeshi@gmail.com",
-      href: `mailto:${settings.contactEmail || "akashudeshi@gmail.com"}`,
-    },
-    {
+      value: settings.contactEmail,
+      href: `mailto:${settings.contactEmail}`,
+    } : null,
+    settings.contactAddress ? {
       icon: "📍",
       label: "LOCATION",
-      value: settings.contactAddress || "Kaliyabid, Bhavnagar, Gujarat",
-      href: `https://maps.google.com/?q=${encodeURIComponent(settings.contactAddress || "Kaliyabid, Bhavnagar")}`,
-    },
-    {
+      value: settings.contactAddress,
+      href: `https://maps.google.com/?q=${encodeURIComponent(settings.contactAddress)}`,
+    } : null,
+    settings.languages ? {
       icon: "🌐",
       label: "LANGUAGES",
-      value: "Gujarati · Hindi · English",
+      value: settings.languages,
       href: null,
-    },
-  ] : fallbackContactDetails;
+    } : null,
+  ].filter(Boolean) : [];
 
   const [formData, setFormData] = useState({
     name: '',
@@ -82,7 +55,12 @@ const Contact = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+    const phoneDigits = settings?.contactPhone?.replace(/\D/g, '');
+    if (!phoneDigits) {
+      window.alert('Contact number is not configured yet.');
+      return;
+    }
+
     const { name, work, message, budget } = formData;
     
     const whatsappMessage = `*New Inquiry from Vision of Akash Portfolio*%0A%0A` +
@@ -91,7 +69,7 @@ const Contact = () => {
       `*Budget:* ${budget}%0A` +
       `*Message:* ${message}`;
       
-    const whatsappUrl = `https://wa.me/${(settings?.contactPhone || "918866337539").replace(/\D/g, '')}?text=${whatsappMessage}`;
+    const whatsappUrl = `https://wa.me/${phoneDigits}?text=${whatsappMessage}`;
     
     window.open(whatsappUrl, '_blank');
   };
@@ -188,7 +166,7 @@ const Contact = () => {
                 required
               ></textarea>
             </div>
-            <button type="submit" className={styles.submitBtn}>SEND MESSAGE</button>
+            <button type="submit" className={styles.submitBtn} disabled={!settings?.contactPhone}>SEND MESSAGE</button>
           </form>
         </motion.div>
       </div>

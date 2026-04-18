@@ -82,28 +82,6 @@ const icons = {
   ),
 };
 
-// Featured service (hero strip)
-const fallbackFeatured = {
-  icon: icons.car,
-  title: "Car / Bike Delivery Shooting",
-  desc: "Premium on-location delivery shoots — cinematic reveal, creative angles, storytelling that sells.",
-  tag: "★ Most Popular",
-};
-
-// Regular 10 services in 2 rows of 5
-const fallbackServices = [
-  { id: 1,  icon: icons.film,        title: "Business Reel",       num: "01" },
-  { id: 2,  icon: icons.instagram,   title: "Instagram Handling",  num: "02" },
-  { id: 3,  icon: icons.ring,        title: "Wedding Reels",       num: "03" },
-  { id: 4,  icon: icons.video,       title: "Event Video Shoot",   num: "04" },
-  { id: 5,  icon: icons.cake,        title: "Birthday Shoot",      num: "05" },
-  { id: 6,  icon: icons.home,        title: "Home Interior Video", num: "06" },
-  { id: 7,  icon: icons.clapperboard,title: "Cinematic Video",     num: "07" },
-  { id: 8,  icon: icons.stars,       title: "Opening Reels",       num: "08" },
-  { id: 9,  icon: icons.bag,         title: "Shop Reels",          num: "09" },
-  { id: 10, icon: icons.briefcase,   title: "Freelancing",         num: "10" },
-];
-
 const cardVariants = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({
@@ -114,30 +92,33 @@ const cardVariants = {
 
 export default function Services() {
   const [serviceList, setServiceList] = useState<any[]>([]);
-  const [activeFeatured, setActiveFeatured] = useState<any>(fallbackFeatured);
+  const [activeFeatured, setActiveFeatured] = useState<any>(null);
 
   useEffect(() => {
     fetch("/api/services")
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
-          const mainFeatured = data.find(s => s.isFeatured) || data[0];
+          const mainFeatured = data.find((s: any) => s.isFeatured) || data[0];
           setActiveFeatured({
             ...mainFeatured,
             icon: (icons as any)[mainFeatured.icon] || icons.car,
             tag: mainFeatured.tag || "★ Featured"
           });
-          const mapped = data.map(s => ({
+          const mapped = data.map((s: any) => ({
             ...s,
             icon: (icons as any)[s.icon] || icons.film
           }));
           setServiceList(mapped);
         } else {
-          setServiceList(fallbackServices);
+          setServiceList([]);
+          setActiveFeatured(null);
         }
       })
-      .catch(() => setServiceList(fallbackServices));
+      .catch(() => { setServiceList([]); setActiveFeatured(null); });
   }, []);
+
+  if (serviceList.length === 0) return null;
 
   return (
     <section id="services" className={styles.section}>
@@ -151,26 +132,28 @@ export default function Services() {
       <h2 className={styles.heading}>Services</h2>
 
       {/* ── FEATURED Hero Strip ── */}
-      <motion.div
-        className={styles.featuredCard}
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <div className={styles.featuredLeft}>
-          <span className={styles.featuredTag}>{activeFeatured.tag}</span>
-          <div className={styles.featuredIconRow}>
-            <span className={styles.featuredIcon}>{activeFeatured.icon}</span>
-            <h3 className={styles.featuredTitle}>{activeFeatured.title}</h3>
+      {activeFeatured && (
+        <motion.div
+          className={styles.featuredCard}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className={styles.featuredLeft}>
+            <span className={styles.featuredTag}>{activeFeatured.tag}</span>
+            <div className={styles.featuredIconRow}>
+              <span className={styles.featuredIcon}>{activeFeatured.icon}</span>
+              <h3 className={styles.featuredTitle}>{activeFeatured.title}</h3>
+            </div>
+            <p className={styles.featuredDesc}>{activeFeatured.desc || activeFeatured.description}</p>
           </div>
-          <p className={styles.featuredDesc}>{activeFeatured.desc || activeFeatured.description}</p>
-        </div>
-        <div className={styles.featuredRight}>
-          <span className={styles.featuredArrow}>→</span>
-        </div>
-        <span className={styles.featuredGhost}>{activeFeatured.num}</span>
-      </motion.div>
+          <div className={styles.featuredRight}>
+            <span className={styles.featuredArrow}>→</span>
+          </div>
+          <span className={styles.featuredGhost}>{activeFeatured.num}</span>
+        </motion.div>
+      )}
 
       {/* ── 2-Row Card Grid (5 × 2) ── */}
       <div className={styles.grid}>

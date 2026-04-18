@@ -33,31 +33,6 @@ const icons = {
   )
 };
 
-const fallbackDegrees = [
-  {
-    id: 1,
-    degree: "Master of Science in Information Technology",
-    short: "M.Sc. (IT)",
-    year: "2024 – 2026",
-    icon: icons.graduation,
-  },
-  {
-    id: 2,
-    degree: "Bachelor of Computer Application",
-    short: "BCA",
-    year: "2021 – 2024",
-    status: "First Class",
-    statusType: "done",
-    icon: icons.book,
-  },
-];
-
-const fallbackUniversity = {
-  name: "Maharaja Krishnakumarsinhji Bhavnagar University",
-  short: "MKBU",
-  location: "Bhavnagar, Gujarat",
-};
-
 const containerVariants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.15 } },
@@ -70,32 +45,33 @@ const cardVariants = {
 
 export default function Education() {
   const [degreeList, setDegreeList] = useState<any[]>([]);
-  const [eduMeta, setEduMeta] = useState(fallbackUniversity);
+  const [eduMeta, setEduMeta] = useState<{ name: string; short: string; location: string } | null>(null);
 
   useEffect(() => {
     fetch("/api/education")
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
-          // Use first item's school info for the main badge
           const first = data[0];
           setEduMeta({
             name: first.schoolName,
             short: first.schoolShort,
             location: first.location
           });
-          // Map icons
-          const mapped = data.map(d => ({
+          const mapped = data.map((d: any) => ({
             ...d,
             icon: (icons as any)[d.icon] || icons.graduation
           }));
           setDegreeList(mapped);
         } else {
-          setDegreeList(fallbackDegrees);
+          setDegreeList([]);
+          setEduMeta(null);
         }
       })
-      .catch(() => setDegreeList(fallbackDegrees));
+      .catch(() => { setDegreeList([]); setEduMeta(null); });
   }, []);
+
+  if (degreeList.length === 0) return null;
 
   return (
     <section id="education" className={styles.section}>
@@ -109,19 +85,21 @@ export default function Education() {
       <h2 className={styles.heading}>Education</h2>
 
       {/* University badge */}
-      <motion.div
-        className={styles.uniBadge}
-        initial={{ opacity: 0, scale: 0.92 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-      >
-        <span className={styles.uniIcon}>{icons.university}</span>
-        <div>
-          <p className={styles.uniName}>{eduMeta.name}</p>
-          <p className={styles.uniMeta}>{eduMeta.short} · {eduMeta.location}</p>
-        </div>
-      </motion.div>
+      {eduMeta && (
+        <motion.div
+          className={styles.uniBadge}
+          initial={{ opacity: 0, scale: 0.92 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className={styles.uniIcon}>{icons.university}</span>
+          <div>
+            <p className={styles.uniName}>{eduMeta.name}</p>
+            <p className={styles.uniMeta}>{eduMeta.short} · {eduMeta.location}</p>
+          </div>
+        </motion.div>
+      )}
 
       {/* Degree cards */}
       <motion.div

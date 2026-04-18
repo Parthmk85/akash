@@ -1,6 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+"use client";
+
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import styles from './AboutMe.module.css';
 
 const icons = {
@@ -31,32 +33,14 @@ interface SkillCategory {
 
 interface ApiSkillCategory {
   title: string;
+  categoryTitle?: string;
   icon?: IconKey | string;
   skills: string[];
 }
 
-const fallbackSkillCategories: SkillCategory[] = [
-  {
-    title: 'Strategy & Growth',
-    icon: icons.strategy,
-    skills: ['Social Media Strategy', 'Influencer Marketing', 'Trend Research', 'Community Engagement']
-  },
-  {
-    title: 'Visual Production',
-    icon: icons.production,
-    skills: ['Video Shooting & Editing', 'Short-form Content', 'Long-form Video', 'Storyboarding']
-  },
-  {
-    title: 'Creative & Stats',
-    icon: icons.creative,
-    skills: ['Graphic Design (Canva)', 'Analytics & Tracking']
-  }
-];
-
 const AboutMe = () => {
   const [skillCategories, setSkillCategories] = useState<SkillCategory[]>([]);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const sectionRef = useRef<HTMLElement | null>(null);
+  const [aboutImage, setAboutImage] = useState<string>('');
 
   useEffect(() => {
     fetch('/api/skills')
@@ -64,96 +48,51 @@ const AboutMe = () => {
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           const mapped = (data as ApiSkillCategory[]).map((category) => ({
-            title: category.title,
+            title: category.title || category.categoryTitle || 'Skill Category',
             skills: category.skills,
             icon: icons[category.icon as IconKey] || icons.creative
           }));
-
           setSkillCategories(mapped);
-          return;
+        } else {
+          setSkillCategories([]);
         }
-
-        setSkillCategories(fallbackSkillCategories);
       })
-      .catch(() => setSkillCategories(fallbackSkillCategories));
+      .catch(() => setSkillCategories([]));
+    fetch('/api/settings')
+      .then(r => r.json())
+      .then(data => { if (data?.aboutImage) setAboutImage(data.aboutImage); })
+      .catch(() => {});
   }, []);
 
-  useEffect(() => {
-    const section = sectionRef.current;
-
-    if (!section || skillCategories.length === 0) {
-      return;
-    }
-
-    let frameId = 0;
-
-    const updateActiveCard = () => {
-      frameId = 0;
-
-      const rect = section.getBoundingClientRect();
-      const scrollableDistance = Math.max(section.offsetHeight - window.innerHeight, 1);
-      const travelledDistance = Math.min(Math.max(-rect.top, 0), scrollableDistance);
-      const progress = travelledDistance / scrollableDistance;
-      const nextIndex = Math.min(skillCategories.length - 1, Math.floor(progress * skillCategories.length));
-
-      setActiveIndex((currentIndex) => currentIndex === nextIndex ? currentIndex : nextIndex);
-    };
-
-    const handleScroll = () => {
-      if (frameId !== 0) {
-        return;
-      }
-
-      frameId = window.requestAnimationFrame(updateActiveCard);
-    };
-
-    updateActiveCard();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll);
-
-    return () => {
-      if (frameId !== 0) {
-        window.cancelAnimationFrame(frameId);
-      }
-
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
-    };
-  }, [skillCategories.length]);
-
-  if (skillCategories.length === 0) return null;
-
-  const activeCategory = skillCategories[activeIndex] ?? fallbackSkillCategories[0];
-
   return (
-    <section id="about" ref={sectionRef} className={styles.aboutContainer}>
+    <section id="about" className={styles.aboutContainer}>
       <div className={styles.stickyFrame}>
         <div className={styles.content}>
           <motion.div
             className={styles.imageWrapper}
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1, ease: 'easeOut' }}
           >
             <div className={styles.imageOverlay}></div>
-            <Image
-              src="/assets/img3.jpeg"
-              alt="Akash Official Profile"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className={styles.aboutImage}
-              style={{ objectFit: 'cover' }}
-            />
+            {aboutImage ? (
+              <Image
+                src={aboutImage}
+                alt="Akash Official Profile"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className={styles.aboutImage}
+                style={{ objectFit: 'cover' }}
+                priority
+                unoptimized
+              />
+            ) : (
+              <div style={{ width: '100%', height: '100%', background: '#e8d9ca' }} />
+            )}
           </motion.div>
 
-          <motion.div
-            className={styles.textWrapper}
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 1, ease: 'easeOut', delay: 0.2 }}
-          >
+          <div className={styles.textWrapper}>
             <div className={styles.skillsSection}>
               <div className={styles.rowHeading}>
                 <span className={styles.headingLine} />
@@ -161,66 +100,38 @@ const AboutMe = () => {
                 <span className={styles.headingLine} />
               </div>
 
-              <div className={styles.storyStatus}>
-                <span className={styles.stepLabel}>Step {String(activeIndex + 1).padStart(2, '0')}</span>
-                <div className={styles.progressDots}>
-                  {skillCategories.map((category, index) => (
-                    <span
-                      key={category.title}
-                      className={`${styles.progressDot} ${index === activeIndex ? styles.progressDotActive : ''}`}
-                    />
-                  ))}
-                </div>
-              </div>
-
               <div className={styles.cardStage}>
-                <AnimatePresence mode="wait" initial={false}>
+                {skillCategories.map((category, i) => (
                   <motion.div
-                    key={activeCategory.title}
+                    key={`${category.title}-${i}`}
                     className={styles.skillCardSingle}
-                    initial={{ opacity: 0, x: 140, scale: 0.96 }}
-                    animate={{ opacity: 1, x: 0, scale: 1 }}
-                    exit={{ opacity: 0, x: -140, scale: 0.94 }}
-                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
                   >
                     <div className={styles.skillCardHeader}>
-                      <span className={styles.skillCardIcon}>{activeCategory.icon}</span>
-                      <h4 className={styles.skillCardTitle}>{activeCategory.title}</h4>
+                      <span className={styles.skillCardIcon}>{category.icon}</span>
+                      <h4 className={styles.skillCardTitle}>{category.title}</h4>
                     </div>
 
                     <ul className={styles.skillItemList}>
-                      {activeCategory.skills.map((skill, index) => (
-                        <motion.li
-                          key={`${activeCategory.title}-${skill}`}
-                          className={styles.skillItem}
-                          initial={{ opacity: 0, x: 18 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.12 + index * 0.08, duration: 0.35 }}
-                        >
+                      {category.skills.map((skill, si) => (
+                        <li key={si} className={styles.skillItem}>
                           <span className={styles.skillDot} />
                           {skill}
-                        </motion.li>
+                        </li>
                       ))}
                     </ul>
-
-                    <p className={styles.cardFootnote}>Scroll down and the current box moves left while the next one enters from the right.</p>
                   </motion.div>
-                </AnimatePresence>
+                ))}
               </div>
             </div>
 
-            <p className={styles.scrollHint}>Aa section par scroll temporarily lock jevu feel aavshe. Tran box ek-ek kari reveal thashe, pachi j next section ma page move thashe.</p>
-
-            <motion.div
-              className={styles.action}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.6 }}
-            >
+            <div className={styles.action} style={{ marginTop: '1.5rem' }}>
               <a href="#contact" className={styles.contactBtn}>Contact Me</a>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

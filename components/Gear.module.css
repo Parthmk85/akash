@@ -43,7 +43,7 @@
 /* ── Grid ────────────────── */
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
 }
 
@@ -53,10 +53,10 @@
   background: rgba(45, 35, 29, 0.04);
   border: 1px solid var(--divider-color);
   border-radius: 24px;
-  padding: 2.8rem 2.4rem;
+  padding: 2.2rem 1.8rem;
   display: flex;
   flex-direction: column;
-  gap: 1.6rem;
+  gap: 1.4rem;
   overflow: hidden;
   transition: border-color 0.4s ease, box-shadow 0.4s ease;
   cursor: default;
@@ -80,16 +80,21 @@
 
 /* ── Icon ────────────────── */
 .iconWrap {
-  width: 72px;
-  height: 72px;
-  border-radius: 18px;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
   background: var(--text-primary);
   color: var(--bg-color);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 8px 24px rgba(45, 35, 29, 0.2);
+  box-shadow: 0 8px 20px rgba(45, 35, 29, 0.15);
+}
+
+.iconWrap svg {
+  width: 32px;
+  height: 32px;
 }
 
 /* ── Body ────────────────── */
@@ -101,7 +106,7 @@
 
 .subtitle {
   font-family: var(--font-sans);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.3em;
   text-transform: uppercase;
@@ -110,7 +115,7 @@
 
 .name {
   font-family: var(--font-serif);
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.1;
@@ -119,23 +124,23 @@
 
 .desc {
   font-family: var(--font-sans);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   color: var(--text-secondary);
-  line-height: 1.7;
-  margin-top: 0.4rem;
+  line-height: 1.6;
+  margin-top: 0.2rem;
 }
 
 /* ── Tags ────────────────── */
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.8rem;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
 }
 
 .tag {
   font-family: var(--font-sans);
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -143,12 +148,21 @@
   background: rgba(45, 35, 29, 0.08);
   border: 1px solid var(--divider-color);
   border-radius: 100px;
-  padding: 0.3rem 0.8rem;
+  padding: 0.25rem 0.6rem;
 }
 
 /* ── Responsive ─────────── */
-@media (max-width: 640px) {
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
   .grid {
     grid-template-columns: 1fr;
+  }
+  .card {
+    padding: 2rem 1.6rem;
   }
 }

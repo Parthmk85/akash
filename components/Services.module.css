@@ -274,3 +274,9 @@
   .featuredRight { display: none; }
   .section { padding: 3rem 5%; }
 }
+
+@media (max-width: 420px) {
+  .grid { grid-template-columns: 1fr; }
+  .card { padding: 1.5rem; }
+  .ghostNum { font-size: 3.5rem; }
+}
