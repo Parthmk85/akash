@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import styles from './Contact.module.css';
 
+interface ContactItem {
+  icon: string;
+  label: string;
+  value: string;
+  href: string | null;
+}
+
 const Contact = () => {
   const [settings, setSettings] = useState<any>(null);
 
@@ -39,7 +46,7 @@ const Contact = () => {
       value: settings.languages,
       href: null,
     } : null,
-  ].filter(Boolean) : [];
+  ].filter((item): item is ContactItem => item !== null) : [];
 
   const [formData, setFormData] = useState({
     name: '',
