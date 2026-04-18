@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Akash Portfolio (Next.js 16)
 
-## Getting Started
+Modern single-page portfolio with admin dashboard APIs, MongoDB persistence, and animated sections.
 
-First, run the development server:
+## 1) Local Development
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Environment setup:
+
+1. `.env` is already included for local run in this workspace.
+2. For a new machine, copy `.env.example` to `.env` and fill values.
+
+Run dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 2) Required Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `MONGODB_URI`
+- `JWT_SECRET`
+- `ADMIN_USERNAME`
+- `ADMIN_PASSWORD`
 
-## Learn More
+## 3) Vercel Deployment (Direct Env Import)
 
-To learn more about Next.js, take a look at the following resources:
+Use the root `.env` file directly in Vercel:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Go to Vercel Project -> Settings -> Environment Variables.
+2. Click `Import .env`.
+3. Upload the `.env` file from project root.
+4. Select environments (`Production`, `Preview`, `Development`) and save.
+5. Redeploy.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 4) Build and Start
 
-## Deploy on Vercel
+```bash
+npm run build
+npm run start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 5) Utility Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Scripts in `scripts/` now resolve `MONGODB_URI` in this order:
+
+1. `process.env.MONGODB_URI`
+2. `.env`
+3. `.env.local`
+
+So the same project works for local development and Vercel with minimal changes.

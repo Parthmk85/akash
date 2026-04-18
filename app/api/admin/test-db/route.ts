@@ -8,7 +8,7 @@ export async function GET() {
     if (!MONGODB_URI) {
       return NextResponse.json({ 
         status: 'ERROR', 
-        error: 'MONGODB_URI is missing in .env.local' 
+        error: 'MONGODB_URI is missing in environment variables' 
       });
     }
 

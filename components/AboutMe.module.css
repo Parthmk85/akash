@@ -145,8 +145,8 @@
 .cardStage {
   position: relative;
   width: 100%;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1rem;
 }
 
@@ -154,8 +154,8 @@
 .skillCardSingle {
   background: white;
   border: 1px solid rgba(176, 125, 98, 0.1);
-  padding: 2rem 2rem 1.6rem;
-  border-radius: 24px;
+  padding: clamp(1rem, 3vw, 2rem) clamp(1rem, 3vw, 2rem) 1.6rem;
+  border-radius: 20px;
   box-shadow: 0 10px 40px rgba(45, 35, 29, 0.03);
   display: flex;
   flex-direction: column;
@@ -183,7 +183,7 @@
 
 .skillCardTitle {
   font-family: var(--font-serif);
-  font-size: 1.4rem;
+  font-size: clamp(1rem, 3.5vw, 1.4rem);
   font-weight: 500;
   color: var(--text-primary);
   text-align: left;
@@ -312,20 +312,44 @@
   }
 }
 
-@media (max-width: 768px) {
-  .storyStatus {
-    justify-content: center;
+@media (max-width: 640px) {
+  .cardStage {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
-
-  .stepLabel {
-    display: none;
+  
+  .skillCardIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+  
+  .skillCardIcon svg {
+    width: 18px;
+    height: 18px;
   }
 
   .skillCardTitle {
-    text-align: left;
+    line-height: 1.2;
   }
 
-  .scrollHint {
-    font-size: 0.88rem;
+  .skillItem {
+    font-size: 0.82rem;
+    gap: 6px;
+  }
+
+  .skillDot {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+@media (max-width: 400px) {
+  .cardStage {
+    gap: 0.5rem;
+  }
+  
+  .skillCardSingle {
+    padding: 0.8rem;
   }
 }

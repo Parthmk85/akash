@@ -3,14 +3,19 @@ import path from 'node:path';
 import mongoose from 'mongoose';
 
 function readMongoUri() {
-  const envPath = path.resolve('.env.local');
+  if (process.env.MONGODB_URI) {
+    return process.env.MONGODB_URI;
+  }
+
+  const envFile = fs.existsSync(path.resolve('.env')) ? '.env' : '.env.local';
+  const envPath = path.resolve(envFile);
   const envRaw = fs.readFileSync(envPath, 'utf8');
   const line = envRaw
     .split(/\r?\n/)
     .find((l) => l.trim().startsWith('MONGODB_URI='));
 
   if (!line) {
-    throw new Error('MONGODB_URI not found in .env.local');
+    throw new Error('MONGODB_URI not found in process.env, .env, or .env.local');
   }
 
   return line.slice('MONGODB_URI='.length).trim();

@@ -167,7 +167,7 @@
 }
 .degTitle {
   font-family: var(--font-serif);
-  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  font-size: clamp(0.9rem, 3.5vw, 1.2rem);
   font-weight: 600;
   color: var(--text-primary);
   line-height: 1.35;
@@ -195,6 +195,15 @@
 
 /* ── Responsive ─────────── */
 @media (max-width: 600px) {
-  .grid { grid-template-columns: 1fr; }
-  .section { padding: 3.5rem 5%; }
+  .grid { 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 0.8rem;
+  }
+  .card { padding: 1rem; }
+  .degIcon { width: 44px; height: 44px; }
+  .degIcon svg { width: 22px; height: 22px; }
+  .badge { font-size: 0.6rem; padding: 3px 8px; }
+  .degShort { font-size: 0.65rem; }
+  .yearPill { font-size: 0.7rem; }
+  .section { padding: 3rem 5%; }
 }

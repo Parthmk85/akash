@@ -4,8 +4,6 @@ import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Navbar from "@/components/Navbar";
-import ScrollPageChrome, { SinglePageSection } from "@/components/ScrollPageChrome";
-import ScrollTimelineItem from "@/components/ScrollTimelineItem";
 import SplashScreen from "@/components/SplashScreen";
 
 // Dynamically import client components to prevent SSR/Hydration issues
@@ -77,23 +75,11 @@ interface HomeSettings {
   heroBadgeShow?: boolean;
 }
 
-const singlePageSections: SinglePageSection[] = [
-  { id: "home", label: "Home", shortLabel: "00" },
-  { id: "about", label: "About", shortLabel: "01" },
-  { id: "services", label: "Services", shortLabel: "02" },
-  { id: "education", label: "Education", shortLabel: "03" },
-  { id: "gear", label: "Gear", shortLabel: "04" },
-  { id: "portfolio", label: "Portfolio", shortLabel: "05" },
-  { id: "feedback", label: "Feedback", shortLabel: "06" },
-  { id: "contact", label: "Contact", shortLabel: "07" },
-];
-
 export default function Home() {
   const [settings, setSettings] = useState<HomeSettings | null>(null);
   const [showSplash, setShowSplash] = useState(true);
   const { scrollYProgress } = useScroll();
   const textY = useTransform(scrollYProgress, [0, 0.35], ["0%", "15%"]);
-  const timelineProgress = useTransform(scrollYProgress, [0.08, 0.95], [0, 1]);
   const heroStats = (settings?.stats ?? []).filter((stat) => stat.value || stat.label);
   const heroSocials = (settings?.socials ?? []).filter((social) => social.platform && social.url);
 
@@ -176,7 +162,6 @@ export default function Home() {
     <div className="flex flex-col min-h-screen" style={{ overflowX: 'hidden' }}>
       <SplashScreen visible={showSplash} onSkip={() => setShowSplash(false)} />
       <Navbar />
-      <ScrollPageChrome scrollYProgress={scrollYProgress} sections={singlePageSections} />
 
       {!showSplash ? (
         <motion.main
@@ -296,39 +281,15 @@ export default function Home() {
             )}
           </section>
 
-          <section className="scroll-timeline">
-            <motion.span className="scroll-timeline__progress" style={{ scaleY: timelineProgress }} />
-
-            <ScrollTimelineItem label="01 / About">
-              <AboutMe />
-            </ScrollTimelineItem>
-
-            <ScrollTimelineItem label="02 / Services">
-              <Services />
-            </ScrollTimelineItem>
-
-            <ScrollTimelineItem label="03 / Education">
-              <Education />
-            </ScrollTimelineItem>
-
-            <ScrollTimelineItem label="04 / Gear">
-              <Gear />
-            </ScrollTimelineItem>
-
-            <ScrollTimelineItem label="05 / Portfolio">
-              <PortfolioSection />
-            </ScrollTimelineItem>
-
-            <ScrollTimelineItem label="06 / Feedback">
-              <div id="feedback">
-                <Feedback />
-              </div>
-            </ScrollTimelineItem>
-
-            <ScrollTimelineItem label="07 / Contact">
-              <Contact />
-            </ScrollTimelineItem>
+          <AboutMe />
+          <Services />
+          <Education />
+          <Gear />
+          <PortfolioSection />
+          <section id="feedback">
+            <Feedback />
           </section>
+          <Contact />
         </motion.main>
       ) : null}
 

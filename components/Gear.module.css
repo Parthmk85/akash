@@ -140,7 +140,7 @@
 
 .tag {
   font-family: var(--font-sans);
-  font-size: 0.6rem;
+  font-size: clamp(0.5rem, 2vw, 0.6rem);
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -148,7 +148,7 @@
   background: rgba(45, 35, 29, 0.08);
   border: 1px solid var(--divider-color);
   border-radius: 100px;
-  padding: 0.25rem 0.6rem;
+  padding: 0.2rem 0.5rem;
 }
 
 /* ── Responsive ─────────── */
@@ -160,9 +160,23 @@
 
 @media (max-width: 768px) {
   .grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
   .card {
-    padding: 2rem 1.6rem;
+    padding: 1.5rem 1.2rem;
+    gap: 1rem;
   }
+  .iconWrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
+  .iconWrap svg {
+    width: 24px;
+    height: 24px;
+  }
+  .subtitle { font-size: 0.55rem; }
+  .name { font-size: 1.1rem; }
+  .desc { font-size: 0.78rem; line-height: 1.4; }
 }

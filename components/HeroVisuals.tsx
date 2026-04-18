@@ -20,7 +20,7 @@ export default function HeroVisuals({ scrollYProgress, heroImage }: HeroVisualsP
             src={heroImage}
             alt="Akash Portrait"
             fill
-            style={{ objectFit: 'cover', objectPosition: 'center 10%' }}
+            style={{ objectFit: 'cover', objectPosition: 'center 5%' }}
             priority
             unoptimized
           />

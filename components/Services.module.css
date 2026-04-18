@@ -165,8 +165,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
-  padding: 1.8rem 1.5rem 1.5rem;
+  gap: clamp(0.6rem, 2vw, 0.9rem);
+  padding: clamp(1rem, 3vw, 1.8rem) clamp(1rem, 3vw, 1.5rem) 1.5rem;
   background: rgba(255, 255, 255, 0.45);
   border: 1.5px solid var(--divider-color);
   border-radius: 16px;
@@ -269,14 +269,23 @@
 }
 
 @media (max-width: 520px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
+  .grid { 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 0.75rem;
+  }
+  .grid > *:first-child {
+    grid-column: span 2;
+  }
   .featuredCard { padding: 1.6rem; flex-direction: column; align-items: flex-start; }
   .featuredRight { display: none; }
   .section { padding: 3rem 5%; }
 }
 
 @media (max-width: 420px) {
-  .grid { grid-template-columns: 1fr; }
-  .card { padding: 1.5rem; }
-  .ghostNum { font-size: 3.5rem; }
+  .card { padding: 1rem; gap: 0.5rem; }
+  .cardIcon { width: 42px; height: 42px; }
+  .cardIcon svg { width: 22px; height: 22px; }
+  .cardTitle { font-size: 0.8rem; }
+  .ghostNum { font-size: 3rem; bottom: -8px; }
+  .cardArrow { font-size: 0.85rem; }
 }

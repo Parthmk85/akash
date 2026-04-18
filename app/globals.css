@@ -358,7 +358,7 @@ h2 {
 /* Main Background Image */
 .hero-img-wrap {
   position: absolute;
-  inset: -10% 0 0 0;
+  inset: 0;
   will-change: transform;
 }
 
@@ -434,9 +434,9 @@ h2 {
   }
   .hero-right {
     order: 1;
-    height: 75vw;
-    max-height: 520px;
-    min-height: 380px;
+    height: 85vw;
+    max-height: 580px;
+    min-height: 420px;
   }
   .frame-1 { width: 120px; left: 4%; top: 8%; transform: rotate(0deg); }
   .img-fade-left { display: none; }

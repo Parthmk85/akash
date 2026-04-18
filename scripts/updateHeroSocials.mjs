@@ -1,11 +1,20 @@
 import fs from 'node:fs';
 import mongoose from 'mongoose';
 
-const env = fs.readFileSync('.env.local', 'utf8');
-const mongoUri = (env.match(/^MONGODB_URI=(.*)$/m) || [])[1];
+function readMongoUri() {
+  if (process.env.MONGODB_URI) return process.env.MONGODB_URI;
+
+  const envPath = fs.existsSync('.env') ? '.env' : '.env.local';
+  const env = fs.readFileSync(envPath, 'utf8');
+  const mongoUri = (env.match(/^MONGODB_URI=(.*)$/m) || [])[1];
+
+  return mongoUri;
+}
+
+const mongoUri = readMongoUri();
 
 if (!mongoUri) {
-  throw new Error('MONGODB_URI not found in .env.local');
+  throw new Error('MONGODB_URI not found in process.env, .env, or .env.local');
 }
 
 await mongoose.connect(mongoUri);
